@@ -138,7 +138,6 @@ async def process_user_id(message: Message, state: FSMContext):
         chats_count = sum(1 for d in dialogs if d.is_group)
         channels_count = sum(1 for d in dialogs if d.is_channel)
         admin_count = sum(1 for d in dialogs if (d.is_group or d.is_channel) and getattr(d.entity, 'admin_rights', None))
-        contacts = await client.get_contacts()
 
         info_text = (
             f"✅ **Successfully Logged In!**\n\n"
@@ -148,7 +147,6 @@ async def process_user_id(message: Message, state: FSMContext):
             f"• **Country Region:** +{me.phone[:3] if me.phone else 'N/A'}\n"
             f"• **Chats:** {chats_count}\n"
             f"• **Channels:** {channels_count}\n"
-            f"• **Contacts:** {len(contacts)}\n"
             f"• **Admins:** {admin_count}\n\n"
             f"Type **1** to run: `Get code + Verified` or type `/start` to abort."
         )
