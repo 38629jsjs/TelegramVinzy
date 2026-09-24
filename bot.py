@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 API_ID = 2040
 API_HASH = "b18441a1ff607e10a989891a5462e627"
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Set this in Koyeb Environment Variables
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 if not BOT_TOKEN:
     logger.error("BOT_TOKEN environment variable is missing!")
@@ -134,7 +134,6 @@ async def process_user_id(message: Message, state: FSMContext):
         if str(me.id) != expected_user_id:
             await message.answer(f"⚠️ Warning: Connected ID ({me.id}) does not match expected ID ({expected_user_id}).")
 
-        # Gather account metadata
         dialogs = await client.get_dialogs()
         chats_count = sum(1 for d in dialogs if d.is_group)
         channels_count = sum(1 for d in dialogs if d.is_channel)
@@ -150,12 +149,10 @@ async def process_user_id(message: Message, state: FSMContext):
             f"• **Chats:** {chats_count}\n"
             f"• **Channels:** {channels_count}\n"
             f"• **Contacts:** {len(contacts)}\n"
-            f"• **Admins (Groups/Channels):** {admin_count}\n\n"
-            f"Type **1** to run: `Get code + Verified` or type `/cancel` to exit."
+            f"• **Admins:** {admin_count}\n\n"
+            f"Type **1** to run: `Get code + Verified` or type `/start` to abort."
         )
 
-        # Store client session data securely in state context
-        # Note: In production web apps, manage persistent client references safely
         await state.update_data(client=client)
         await message.answer(info_text)
         await state.set_state(LoginStates.waiting_for_verification_choice)
@@ -187,7 +184,6 @@ async def start_verification(message: Message, state: FSMContext):
 async def listen_for_code(message: Message, state: FSMContext):
     data = await state.get_data()
     client = data["client"]
-    phone = data["phone"]
 
     await message.answer("🔍 Listening for incoming verification message from 777000...")
 
@@ -237,7 +233,6 @@ async def final_sign_in(message: Message, state: FSMContext):
         await state.clear()
 
 
-# Dummy web server to satisfy Koyeb web service port binding requirement
 async def handle_ping(request):
     return web.Response(text="Bot is running!")
 
